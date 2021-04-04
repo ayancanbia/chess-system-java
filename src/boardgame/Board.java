@@ -36,4 +36,11 @@ public class Board {
 		return pieces[position.getRow()][position.getColumn()];
 	}
 		
+	public void placePiece(Piece piece, Position position) { //put the Piece piece on the Position position of the board
+		pieces[position.getRow()][position.getColumn()] = piece; 
+		/*in the pieces matrix of the board, in the position.getrow and in the column position.getcolumn
+		 attributes to this pieces matrix, the piece that came as argument (piece)*/
+		piece.position = position; //now, the position of the piece isn't null anymore
+	}
+	
 }
