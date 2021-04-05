@@ -10,7 +10,7 @@ public class Piece {
 		position = null;
 	}
 
-	protected Board getBoard() { //just the get method: the board can't be changed -- protected: only classes and subclasses within the same package will be able to access the board
+	protected Board getBoard() { //only the get method: the board can't be changed -- protected: only classes and subclasses within the same package will be able to access the board
 		return board;
 	}	
 }
