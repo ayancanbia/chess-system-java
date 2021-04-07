@@ -48,6 +48,21 @@ public class Board {
 		
     }
 	
+	public Piece removePiece(Position position) { //
+		if (!positionExists(position)) {
+			throw new BoardException("Position not on the board");
+		}
+		if (piece(position) == null) { 
+			return null;
+		}
+		Piece aux = piece(position); //var aux receive the piece in this position
+		aux.position = null; //now, the position of the aux is null
+		pieces[position.getRow()][position.getColumn()] = null; //access the pieces matrix, in the position's column/row, receive null
+		return aux;
+	}
+	
+	
+	
 	
 	//------------------------------------------METHOD TO TEST IF THE POSITION EXISTS-------------------------------------------------------------------------------------
 	private boolean positionExists(int row, int column) { //easier test by the row/column than by the position
