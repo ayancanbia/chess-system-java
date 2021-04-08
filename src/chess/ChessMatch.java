@@ -28,6 +28,12 @@ public class ChessMatch {
 		return mat; 
 	}
 	
+	public boolean[][] possibleMoves(ChessPosition sourcePosition) { // method to make the program capable of printing the possible moves from a source position
+		Position position = sourcePosition.toPosition(); //convert the chessposition to matrix position
+		validateSourcePosition(position);
+		return board.piece(position).possibleMoves(); //return the possible moves of the piece on this position
+	}
+	
 	public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) { //method return a captured position 
 		Position source = sourcePosition.toPosition(); //converting the chessposition to matrix position. remove the piece from the original position
 		Position target = targetPosition.toPosition(); //to the target position

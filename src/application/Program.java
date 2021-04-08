@@ -24,6 +24,10 @@ public class Program {
 				System.out.print("Source: "); //origin position
 				ChessPosition source = UI.readChessPosition(sc);//reading the chessposition
 				
+				boolean[][] possibleMoves = chessMatch.possibleMoves(source);
+				UI.clearScreen();
+				UI.printBoard(chessMatch.getPieces(), possibleMoves); //overload of printBoard, responsible to print the board coloring the possible moves of the source position
+				
 				System.out.println();
 				System.out.print("Target: "); //target position?
 				ChessPosition target = UI.readChessPosition(sc); //reading the chessposition
