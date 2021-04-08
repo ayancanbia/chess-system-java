@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
@@ -11,6 +14,9 @@ public class ChessMatch {
 	private Board board;
 	private int turn;
 	private Color currentPlayer;
+	
+	private List<Piece> piecesOnTheBoard = new ArrayList<>();
+	private List<Piece> capturedPieces = new ArrayList<>();
 	
 	public ChessMatch() {
 		board = new Board(8, 8); //this class is responsible for knowing the size of a board
@@ -60,6 +66,11 @@ public class ChessMatch {
 		Piece p = board.removePiece(source); //remove the piece from the original position
 		Piece capturedPiece = board.removePiece(target); //remove (if) the piece on the target position
 		board.placePiece(p, target); //now, the piece p is on the target position
+		
+		if(capturedPiece != null) {
+			piecesOnTheBoard.remove(capturedPiece); //remove the piece from the list of pieces on the board
+			capturedPieces.add(capturedPiece); //and add to the list of captured pieces
+		}
 		return capturedPiece;		
 	}
 	
@@ -88,6 +99,7 @@ public class ChessMatch {
 	
 	private void placeNewPiece(char column, int row, ChessPiece piece) { //receive the chess coordinates and the chess piece
 		board.placePiece(piece, new ChessPosition(column, row).toPosition()); //placing a new piecing receiving chess coordinates
+		piecesOnTheBoard.add(piece); 
 	}
 	
 	private void initialSetup() { //responsible for starting the chess match, putting the pieces on the board
