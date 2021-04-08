@@ -30,7 +30,7 @@ public class ChessPosition {
 	
 	
 	protected static ChessPosition fromPosition(Position position) { //from matrix to chess
-		return new ChessPosition((char)('a' - position.getColumn()), 8 - position.getRow()); //casting to char
+		return new ChessPosition((char)('a' + position.getColumn()), 8 - position.getRow()); //casting to char
 	}
 	
 	@Override

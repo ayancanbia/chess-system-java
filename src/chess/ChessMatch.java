@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import boardgame.Board;
 import boardgame.Piece;
@@ -14,6 +15,7 @@ public class ChessMatch {
 	private Board board;
 	private int turn;
 	private Color currentPlayer;
+	private boolean check;
 	
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();
 	private List<Piece> capturedPieces = new ArrayList<>();
@@ -22,6 +24,7 @@ public class ChessMatch {
 		board = new Board(8, 8); //this class is responsible for knowing the size of a board
 		turn = 1;
 		currentPlayer = Color.WHITE; //whites begin
+		check = false; //a boolean property starts with false value always
 		initialSetup();
 	}
 	
@@ -31,6 +34,10 @@ public class ChessMatch {
 	
 	public Color getCurrentPlayer() {
 		return currentPlayer;
+	}
+	
+	public boolean getCheck() {
+		return check;
 	}
 	
 	public ChessPiece[][] getPieces() { //this method returns a pieces matrix corresponding to the match
@@ -58,6 +65,12 @@ public class ChessMatch {
 		validateSourcePosition(source); //method to know if there is a piece on the source position
 		validateTargetPosition(source, target);
 		Piece capturedPiece = makeMove(source, target);
+		
+		if (testCheck(currentPlayer)) {
+			undoMove(source, target, capturedPiece);
+			throw new ChessException("You can't put yourself in check!");
+		}	
+		check = (testCheck(opponent(currentPlayer))) ? true : false; //if testCheck is true, the opponent is in check
 		nextTurn();
 		return (ChessPiece)capturedPiece; //downcasting to ChessPiece, cause the capturedPiece is a Piece
 	}
@@ -73,6 +86,18 @@ public class ChessMatch {
 		}
 		return capturedPiece;		
 	}
+	
+	private void undoMove(Position source, Position target, Piece capturedPiece) { //method to undo moves -- p.ex player put himself in check
+		Piece p = board.removePiece(target); //remove the piece of the target
+		board.placePiece(p, source); //return the piece to the source position
+		
+		if (capturedPiece != null) {
+			board.placePiece(capturedPiece, target);
+			capturedPieces.remove(capturedPiece);
+			piecesOnTheBoard.add(capturedPiece);
+		}
+	}
+	
 	
 	private void validateSourcePosition(Position position) {
 		if (!board.thereIsAPiece(position)) {
@@ -96,6 +121,34 @@ public class ChessMatch {
 		turn++; 
 		currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE; //if the current player is white, then it will now be black, otherwise it will be white
 	}
+	
+	private Color opponent(Color color) { //method returns the color of the opponent
+		return (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
+	}
+	
+	private ChessPiece king(Color color) { //method to find the king of each color
+		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList()); //filtering the list. list receives the pieces in play,
+	// look for every piece x, such that the color of piece x is the color of the argument. downcasting necessary because piece has no color	
+		for (Piece p : list) {
+			if (p instanceof King) {
+				return (ChessPiece)p;
+			}
+		}
+		throw new IllegalStateException("The is no" + color + " king on the board"); 
+	}
+	
+	private boolean testCheck(Color color) { //testing if the king of that color is in check
+		Position kingPosition = king(color).getChessPosition().toPosition(); //get the chess position of the king and convert to matrix position
+		List<Piece> opponentPieces =  piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == opponent(color)).collect(Collectors.toList());
+		for (Piece p: opponentPieces) {
+			boolean[][] mat = p.possibleMoves(); //matrix of possibles moves of the opponent piece p
+			if (mat[kingPosition.getRow()][kingPosition.getColumn()]) { //if the element of the matrix is true, means that the king is in check
+				return true; //check test is true
+			}
+		}
+		return false; 
+	}
+	
 	
 	private void placeNewPiece(char column, int row, ChessPiece piece) { //receive the chess coordinates and the chess piece
 		board.placePiece(piece, new ChessPosition(column, row).toPosition()); //placing a new piecing receiving chess coordinates
