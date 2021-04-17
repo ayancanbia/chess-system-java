@@ -6,6 +6,8 @@ import chess.ChessPiece;
 import chess.Color;
 
 public class Knight extends ChessPiece{
+	
+	
 
 	public Knight(Board board, Color color) {
 		super(board, color);
@@ -20,7 +22,7 @@ public class Knight extends ChessPiece{
 		ChessPiece p = (ChessPiece)getBoard().piece(position); 
 		return p == null || p.getColor() != getColor(); //can move if the place is empty OR the piece color is different
 	}
-	
+
 	@Override
 	public boolean[][] possibleMoves() {
 		boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColumns()];
@@ -75,8 +77,10 @@ public class Knight extends ChessPiece{
 		if (getBoard().positionExists(p) && canMove(p)) {
 			mat[p.getRow()][p.getColumn()] = true;
 		}
+		
+	
 		return mat;
 	}
 	
-	
-}
+	}
+
